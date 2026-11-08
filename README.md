@@ -54,4 +54,4 @@ Changes made by hand in the GitHub UI are reverted by the daily drift check.
 
 ## License
 
-[Apache License 2.0](LICENSE)
+[GNU General Public License v3.0](LICENSE)
