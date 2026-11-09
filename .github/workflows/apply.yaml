@@ -18,7 +18,7 @@ permissions:
 
 env:
   # Installed with go install (from the Go module proxy), not downloaded from GitHub releases
-  GHSETTINGS_VERSION: v0.0.1
+  GHSETTINGS_VERSION: v0.0.2
 
 jobs:
   apply:
