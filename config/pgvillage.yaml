@@ -1,0 +1,147 @@
+# Current state of the repositories of pgvillage, exported with ghsettings export (2026-11-09).
+# Planning this config changes nothing; changes towards the standard (#1) follow in separate PRs.
+profiles:
+  ansible-role:
+    settings:
+      allow_auto_merge: true
+      allow_merge_commit: true
+      allow_rebase_merge: true
+      allow_squash_merge: true
+      allow_update_branch: false
+      delete_branch_on_merge: true
+    ruleset:
+      required_checks:
+        - Ansible Lint
+        - Molecule
+      rules:
+        deletion: {}
+        non_fast_forward: {}
+        pull_request:
+          allowed_merge_methods:
+            - merge
+            - squash
+            - rebase
+          dismiss_stale_reviews_on_push: true
+          require_code_owner_review: true
+          require_extra_approval_for_unattributed_changes: true
+          require_last_push_approval: true
+          required_approving_review_count: 1
+          required_review_thread_resolution: true
+  ansible-lint-only:
+    settings:
+      allow_auto_merge: true
+      allow_merge_commit: true
+      allow_rebase_merge: true
+      allow_squash_merge: true
+      allow_update_branch: false
+      delete_branch_on_merge: true
+    ruleset:
+      required_checks:
+        - Ansible Lint
+      rules:
+        deletion: {}
+        non_fast_forward: {}
+        pull_request:
+          allowed_merge_methods:
+            - merge
+            - squash
+            - rebase
+          dismiss_stale_reviews_on_push: true
+          require_code_owner_review: true
+          require_extra_approval_for_unattributed_changes: true
+          require_last_push_approval: true
+          required_approving_review_count: 1
+          required_review_thread_resolution: true
+  pgv:
+    settings:
+      allow_auto_merge: true
+      allow_merge_commit: true
+      allow_rebase_merge: true
+      allow_squash_merge: true
+      allow_update_branch: false
+      delete_branch_on_merge: true
+    ruleset:
+      rules:
+        deletion: {}
+        non_fast_forward: {}
+        pull_request:
+          allowed_merge_methods:
+            - merge
+            - squash
+            - rebase
+          dismiss_stale_reviews_on_push: true
+          require_code_owner_review: true
+          require_extra_approval_for_unattributed_changes: true
+          require_last_push_approval: true
+          required_approving_review_count: 1
+          required_review_thread_resolution: true
+orgs:
+  pgvillage:
+    repos:
+      - match: ansible-role-linux
+        settings:
+          allow_auto_merge: true
+          allow_merge_commit: true
+          allow_rebase_merge: true
+          allow_squash_merge: true
+          allow_update_branch: false
+          delete_branch_on_merge: true
+        ruleset:
+          required_checks:
+            - Ansible Lint
+            - Molecule (apt)
+            - Molecule (default)
+            - Molecule (zypper)
+          rules:
+            deletion: {}
+            non_fast_forward: {}
+            pull_request:
+              allowed_merge_methods:
+                - merge
+                - squash
+                - rebase
+              dismiss_stale_reviews_on_push: true
+              require_code_owner_review: true
+              require_extra_approval_for_unattributed_changes: true
+              require_last_push_approval: true
+              required_approving_review_count: 1
+              required_review_thread_resolution: true
+      - match: ansible-role-nagios
+        profile: ansible-lint-only
+      - match: github-settings
+        settings:
+          allow_auto_merge: true
+          allow_merge_commit: false
+          allow_rebase_merge: false
+          allow_squash_merge: true
+          allow_update_branch: true
+          delete_branch_on_merge: true
+        ruleset:
+          merge_queue:
+            check_response_timeout_minutes: 60
+            grouping_strategy: ALLGREEN
+            max_entries_to_build: 5
+            max_entries_to_merge: 5
+            merge_method: SQUASH
+            min_entries_to_merge: 1
+            min_entries_to_merge_wait_minutes: 5
+          required_checks:
+            - Validate PR Title
+          rules:
+            deletion: {}
+            non_fast_forward: {}
+            pull_request:
+              allowed_merge_methods:
+                - squash
+              dismiss_stale_reviews_on_push: true
+              require_code_owner_review: true
+              require_extra_approval_for_unattributed_changes: true
+              require_last_push_approval: true
+              required_approving_review_count: 1
+              required_review_thread_resolution: true
+      - match: pgvillage
+        profile: ansible-lint-only
+      - match: ansible-role-*
+        profile: ansible-role
+      - match: pgv_*
+        profile: pgv
