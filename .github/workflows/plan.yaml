@@ -15,7 +15,7 @@ permissions:
 
 env:
   # Installed with go install (from the Go module proxy), not downloaded from GitHub releases
-  GHSETTINGS_VERSION: v0.1.0
+  GHSETTINGS_VERSION: v0.0.1
 
 jobs:
   # Plans the config with the read-only GitHub App. A PR can change this workflow, so it must never get the admin
