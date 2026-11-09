@@ -126,6 +126,7 @@ orgs:
             min_entries_to_merge: 1
             min_entries_to_merge_wait_minutes: 5
           required_checks:
+            - CI result
             - Validate PR Title
           rules:
             deletion: {}
