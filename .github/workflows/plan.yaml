@@ -1,0 +1,137 @@
+name: Plan
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+  merge_group:
+  workflow_dispatch:
+
+# A new push to a PR cancels the run of the previous push
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+permissions:
+  contents: read
+
+env:
+  # Installed with go install (from the Go module proxy), not downloaded from GitHub releases
+  GHSETTINGS_VERSION: v0.0.2
+
+jobs:
+  # Plans the config with the read-only GitHub App. A PR can change this workflow, so it must never get the admin
+  # App: that one is only used by apply.yaml, from main, in the production environment.
+  plan:
+    name: Plan
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write # for the plan comment
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v4.0.0
+      - name: Setup Golang
+        uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          go-version: '1.26'
+          cache: false
+      - name: Install ghsettings
+        run: go install "github.com/pgvillage-tools/ghsettings/cmd/ghsettings@${GHSETTINGS_VERSION}"
+      - name: Token for pgvillage
+        id: token-pgvillage
+        uses: actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510 # v3.3.0
+        with:
+          app-id: ${{ vars.READ_APP_ID }}
+          private-key: ${{ secrets.READ_APP_PRIVATE_KEY }}
+          owner: pgvillage
+          permission-administration: read
+          permission-contents: read
+      - name: Token for pgvillage-tools
+        id: token-pgvillage-tools
+        uses: actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510 # v3.3.0
+        with:
+          app-id: ${{ vars.READ_APP_ID }}
+          private-key: ${{ secrets.READ_APP_PRIVATE_KEY }}
+          owner: pgvillage-tools
+          permission-administration: read
+          permission-contents: read
+      - name: Token for pgvillage-build
+        id: token-pgvillage-build
+        uses: actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510 # v3.3.0
+        with:
+          app-id: ${{ vars.READ_APP_ID }}
+          private-key: ${{ secrets.READ_APP_PRIVATE_KEY }}
+          owner: pgvillage-build
+          permission-administration: read
+          permission-contents: read
+      - name: Plan
+        id: plan
+        env:
+          GHSETTINGS_TOKEN_PGVILLAGE: ${{ steps.token-pgvillage.outputs.token }}
+          GHSETTINGS_TOKEN_PGVILLAGE_TOOLS: ${{ steps.token-pgvillage-tools.outputs.token }}
+          GHSETTINGS_TOKEN_PGVILLAGE_BUILD: ${{ steps.token-pgvillage-build.outputs.token }}
+        run: |
+          set +e
+          ghsettings plan --config config --detailed-exitcode > plan.txt 2>&1
+          code=$?
+          set -e
+          cat plan.txt
+          echo "exitcode=${code}" >> "${GITHUB_OUTPUT}"
+          {
+            echo '## ghsettings plan'
+            echo '```text'
+            cat plan.txt
+            echo '```'
+          } >> "${GITHUB_STEP_SUMMARY}"
+          # 0: no changes, 2: changes; anything else is an error
+          [ "${code}" -eq 0 ] || [ "${code}" -eq 2 ]
+      - name: Comment the plan on the PR
+        if: always() && github.event_name == 'pull_request' && steps.plan.outputs.exitcode != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          PR: ${{ github.event.pull_request.number }}
+          EXITCODE: ${{ steps.plan.outputs.exitcode }}
+        run: |
+          marker='<!-- ghsettings-plan -->'
+          case "${EXITCODE}" in
+            0) result='No changes.' ;;
+            2) result='**Changes** (applied after the merge):' ;;
+            *) result='**The plan failed:**' ;;
+          esac
+          {
+            echo "${marker}"
+            echo "### ghsettings plan"
+            echo
+            echo "${result}"
+            echo
+            echo '```text'
+            # A comment can hold 65536 characters
+            head -c 60000 plan.txt
+            echo '```'
+          } > comment.md
+          id=$(gh api "repos/${REPO}/issues/${PR}/comments" --paginate \
+            --jq ".[] | select(.body | startswith(\"${marker}\")) | .id" | head -1)
+          if [ -n "${id}" ]; then
+            gh api -X PATCH "repos/${REPO}/issues/comments/${id}" -F body=@comment.md --silent
+          else
+            gh api -X POST "repos/${REPO}/issues/${PR}/comments" -F body=@comment.md --silent
+          fi
+
+  # The required check of this workflow. It must always run, and only passes when every job it needs succeeded (a
+  # skipped required check would count as a pass).
+  ci-result:
+    name: CI result
+    runs-on: ubuntu-latest
+    needs:
+      - plan
+    if: always()
+    steps:
+      - name: Evaluate the results
+        env:
+          RESULTS: ${{ toJSON(needs.*.result) }}
+        run: |
+          echo "Results: ${RESULTS}"
+          if [ "$(echo "${RESULTS}" | jq -r 'all(. == "success")')" != true ]; then
+            echo "::error::All CI jobs must succeed"
+            exit 1
+          fi

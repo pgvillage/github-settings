@@ -1,0 +1,124 @@
+name: Apply
+on:
+  push:
+    branches:
+      - main
+  # Drift check: changes made by hand are reverted to the config
+  schedule:
+    - cron: '17 5 * * *'
+  workflow_dispatch:
+
+# Only one apply at a time, and never cancel one that is running
+concurrency:
+  group: ghsettings-apply
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+env:
+  # Installed with go install (from the Go module proxy), not downloaded from GitHub releases
+  GHSETTINGS_VERSION: v0.0.2
+
+jobs:
+  apply:
+    name: Apply
+    runs-on: ubuntu-latest
+    # Holds the private key of the admin App; only main may deploy to it
+    environment: production
+    permissions:
+      contents: read
+      issues: write # to report drift
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v4.0.0
+      - name: Setup Golang
+        uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          go-version: '1.26'
+          cache: false
+      - name: Install ghsettings
+        run: go install "github.com/pgvillage-tools/ghsettings/cmd/ghsettings@${GHSETTINGS_VERSION}"
+      - name: Token for pgvillage
+        id: token-pgvillage
+        uses: actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510 # v3.3.0
+        with:
+          app-id: ${{ vars.ADMIN_APP_ID }}
+          private-key: ${{ secrets.ADMIN_APP_PRIVATE_KEY }}
+          owner: pgvillage
+          permission-administration: write
+          permission-contents: read
+      - name: Token for pgvillage-tools
+        id: token-pgvillage-tools
+        uses: actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510 # v3.3.0
+        with:
+          app-id: ${{ vars.ADMIN_APP_ID }}
+          private-key: ${{ secrets.ADMIN_APP_PRIVATE_KEY }}
+          owner: pgvillage-tools
+          permission-administration: write
+          permission-contents: read
+      - name: Token for pgvillage-build
+        id: token-pgvillage-build
+        uses: actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510 # v3.3.0
+        with:
+          app-id: ${{ vars.ADMIN_APP_ID }}
+          private-key: ${{ secrets.ADMIN_APP_PRIVATE_KEY }}
+          owner: pgvillage-build
+          permission-administration: write
+          permission-contents: read
+      - name: Plan
+        id: plan
+        env:
+          GHSETTINGS_TOKEN_PGVILLAGE: ${{ steps.token-pgvillage.outputs.token }}
+          GHSETTINGS_TOKEN_PGVILLAGE_TOOLS: ${{ steps.token-pgvillage-tools.outputs.token }}
+          GHSETTINGS_TOKEN_PGVILLAGE_BUILD: ${{ steps.token-pgvillage-build.outputs.token }}
+        run: |
+          set +e
+          ghsettings plan --config config --detailed-exitcode > plan.txt 2>&1
+          code=$?
+          set -e
+          cat plan.txt
+          echo "exitcode=${code}" >> "${GITHUB_OUTPUT}"
+          {
+            echo '## ghsettings plan'
+            echo '```text'
+            cat plan.txt
+            echo '```'
+          } >> "${GITHUB_STEP_SUMMARY}"
+          [ "${code}" -eq 0 ] || [ "${code}" -eq 2 ]
+      - name: Apply
+        if: steps.plan.outputs.exitcode == '2'
+        env:
+          GHSETTINGS_TOKEN_PGVILLAGE: ${{ steps.token-pgvillage.outputs.token }}
+          GHSETTINGS_TOKEN_PGVILLAGE_TOOLS: ${{ steps.token-pgvillage-tools.outputs.token }}
+          GHSETTINGS_TOKEN_PGVILLAGE_BUILD: ${{ steps.token-pgvillage-build.outputs.token }}
+        run: |
+          ghsettings apply --config config 2>&1 | tee apply.txt
+          {
+            echo '## ghsettings apply'
+            echo '```text'
+            cat apply.txt
+            echo '```'
+          } >> "${GITHUB_STEP_SUMMARY}"
+      # On the schedule, changes mean that someone changed settings by hand: make that visible
+      - name: Report drift
+        if: github.event_name == 'schedule' && steps.plan.outputs.exitcode == '2'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          RUN: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          {
+            echo "The daily drift check found settings that differ from the config, and restored them ([run](${RUN}))."
+            echo
+            echo '```text'
+            head -c 60000 plan.txt
+            echo '```'
+          } > drift.md
+          title='Drift: settings changed outside the config'
+          number=$(gh issue list -R "${REPO}" --state open --search "in:title \"${title}\"" --json number --jq '.[0].number')
+          if [ -n "${number}" ]; then
+            gh issue comment "${number}" -R "${REPO}" --body-file drift.md
+          else
+            gh issue create -R "${REPO}" --title "${title}" --body-file drift.md
+          fi
