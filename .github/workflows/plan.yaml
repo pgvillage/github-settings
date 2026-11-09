@@ -63,15 +63,6 @@ jobs:
           owner: pgvillage-build
           permission-administration: read
           permission-contents: read
-      - name: "DEBUG (temporary): merge settings visible to the read App?"
-        continue-on-error: true
-        env:
-          GH_TOKEN: ${{ steps.token-pgvillage.outputs.token }}
-        run: |
-          echo "REST:"
-          gh api repos/pgvillage/ansible-role-etcd --jq '{allow_auto_merge, allow_merge_commit, allow_squash_merge, allow_rebase_merge, delete_branch_on_merge, allow_update_branch, permissions}'
-          echo "GraphQL:"
-          gh api graphql -f query='{repository(owner:"pgvillage",name:"ansible-role-etcd"){autoMergeAllowed deleteBranchOnMerge mergeCommitAllowed rebaseMergeAllowed squashMergeAllowed}}'
       - name: Plan
         id: plan
         env:
