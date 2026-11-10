@@ -1,47 +1,13 @@
 # The repositories of pgvillage-build: profiles and exceptions to the standard (standard.yaml).
 # Started as the exported current state (2026-11-09); moves to the standard in small PRs (#1).
-profiles:
-  no-required-checks:
-    ruleset:
-      rules:
-        deletion: {}
-        non_fast_forward: {}
-        pull_request:
-          allowed_merge_methods:
-            - merge
-            - squash
-            - rebase
-          dismiss_stale_reviews_on_push: true
-          require_code_owner_review: true
-          require_extra_approval_for_unattributed_changes: true
-          require_last_push_approval: true
-          required_approving_review_count: 1
-          required_review_thread_resolution: true
 orgs:
   pgvillage-build:
     repos:
       - match: aptbuilder
-        profile: no-required-checks
       - match: db2_fdw
-        profile: no-required-checks
       - match: imgbuilder
-        profile: no-required-checks
       - match: rpmbuilder
         ruleset:
           required_checks:
             - Validate PR Title
             - check-build-rpms-status
-          rules:
-            deletion: {}
-            non_fast_forward: {}
-            pull_request:
-              allowed_merge_methods:
-                - merge
-                - squash
-                - rebase
-              dismiss_stale_reviews_on_push: true
-              require_code_owner_review: true
-              require_extra_approval_for_unattributed_changes: true
-              require_last_push_approval: true
-              required_approving_review_count: 1
-              required_review_thread_resolution: true

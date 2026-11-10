@@ -6,54 +6,10 @@ profiles:
       required_checks:
         - Ansible Lint
         - Molecule
-      rules:
-        deletion: {}
-        non_fast_forward: {}
-        pull_request:
-          allowed_merge_methods:
-            - merge
-            - squash
-            - rebase
-          dismiss_stale_reviews_on_push: true
-          require_code_owner_review: true
-          require_extra_approval_for_unattributed_changes: true
-          require_last_push_approval: true
-          required_approving_review_count: 1
-          required_review_thread_resolution: true
   ansible-lint-only:
     ruleset:
       required_checks:
         - Ansible Lint
-      rules:
-        deletion: {}
-        non_fast_forward: {}
-        pull_request:
-          allowed_merge_methods:
-            - merge
-            - squash
-            - rebase
-          dismiss_stale_reviews_on_push: true
-          require_code_owner_review: true
-          require_extra_approval_for_unattributed_changes: true
-          require_last_push_approval: true
-          required_approving_review_count: 1
-          required_review_thread_resolution: true
-  pgv:
-    ruleset:
-      rules:
-        deletion: {}
-        non_fast_forward: {}
-        pull_request:
-          allowed_merge_methods:
-            - merge
-            - squash
-            - rebase
-          dismiss_stale_reviews_on_push: true
-          require_code_owner_review: true
-          require_extra_approval_for_unattributed_changes: true
-          require_last_push_approval: true
-          required_approving_review_count: 1
-          required_review_thread_resolution: true
 orgs:
   pgvillage:
     repos:
@@ -64,20 +20,6 @@ orgs:
             - Molecule (apt)
             - Molecule (default)
             - Molecule (zypper)
-          rules:
-            deletion: {}
-            non_fast_forward: {}
-            pull_request:
-              allowed_merge_methods:
-                - merge
-                - squash
-                - rebase
-              dismiss_stale_reviews_on_push: true
-              require_code_owner_review: true
-              require_extra_approval_for_unattributed_changes: true
-              require_last_push_approval: true
-              required_approving_review_count: 1
-              required_review_thread_resolution: true
       - match: ansible-role-nagios
         profile: ansible-lint-only
       - match: github-settings
@@ -93,18 +35,6 @@ orgs:
           required_checks:
             - CI result
             - Validate PR Title
-          rules:
-            deletion: {}
-            non_fast_forward: {}
-            pull_request:
-              allowed_merge_methods:
-                - squash
-              dismiss_stale_reviews_on_push: true
-              require_code_owner_review: true
-              require_extra_approval_for_unattributed_changes: true
-              require_last_push_approval: true
-              required_approving_review_count: 1
-              required_review_thread_resolution: true
         settings:
           allow_update_branch: true
       - match: pgvillage
@@ -112,4 +42,3 @@ orgs:
       - match: ansible-role-*
         profile: ansible-role
       - match: pgv_*
-        profile: pgv
