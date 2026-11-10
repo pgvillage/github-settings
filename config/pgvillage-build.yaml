@@ -1,14 +1,7 @@
-# Current state of the repositories of pgvillage-build, exported with ghsettings export (2026-11-09).
-# Planning this config changes nothing; changes towards the standard (#1) follow in separate PRs.
+# The repositories of pgvillage-build: profiles and exceptions to the standard (standard.yaml).
+# Started as the exported current state (2026-11-09); moves to the standard in small PRs (#1).
 profiles:
   no-required-checks:
-    settings:
-      allow_auto_merge: true
-      allow_merge_commit: true
-      allow_rebase_merge: true
-      allow_squash_merge: true
-      allow_update_branch: false
-      delete_branch_on_merge: true
     ruleset:
       rules:
         deletion: {}
@@ -34,13 +27,6 @@ orgs:
       - match: imgbuilder
         profile: no-required-checks
       - match: rpmbuilder
-        settings:
-          allow_auto_merge: true
-          allow_merge_commit: true
-          allow_rebase_merge: true
-          allow_squash_merge: true
-          allow_update_branch: false
-          delete_branch_on_merge: true
         ruleset:
           required_checks:
             - Validate PR Title

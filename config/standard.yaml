@@ -1,0 +1,10 @@
+# The standard for every repository (#1). Org files and profiles override parts of it; repositories move to the
+# standard in small steps (see the README).
+standard:
+  settings:
+    allow_auto_merge: true
+    allow_merge_commit: false
+    allow_rebase_merge: false
+    allow_squash_merge: true
+    allow_update_branch: false
+    delete_branch_on_merge: true
