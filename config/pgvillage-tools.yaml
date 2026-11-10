@@ -1,53 +1,16 @@
-# Current state of the repositories of pgvillage-tools, exported with ghsettings export (2026-11-09).
-# Planning this config changes nothing; changes towards the standard (#1) follow in separate PRs.
-profiles:
-  no-ruleset:
-    settings:
-      allow_auto_merge: false
-      allow_merge_commit: true
-      allow_rebase_merge: true
-      allow_squash_merge: true
-      allow_update_branch: false
-      delete_branch_on_merge: false
+# The repositories of pgvillage-tools: profiles and exceptions to the standard (standard.yaml).
+# Started as the exported current state (2026-11-09); moves to the standard in small PRs (#1).
 orgs:
   pgvillage-tools:
     repos:
       - match: chainsmith
-        settings:
-          allow_auto_merge: true
-          allow_merge_commit: true
-          allow_rebase_merge: true
-          allow_squash_merge: true
-          allow_update_branch: false
-          delete_branch_on_merge: true
         ruleset:
           required_checks:
             - Ensure Go modules synchronicity
             - Lint Go code
             - Run unittests
             - Validate PR Title
-          rules:
-            deletion: {}
-            non_fast_forward: {}
-            pull_request:
-              allowed_merge_methods:
-                - merge
-                - squash
-                - rebase
-              dismiss_stale_reviews_on_push: false
-              require_code_owner_review: false
-              require_extra_approval_for_unattributed_changes: true
-              require_last_push_approval: false
-              required_approving_review_count: 1
-              required_review_thread_resolution: false
       - match: dbtwool
-        settings:
-          allow_auto_merge: true
-          allow_merge_commit: true
-          allow_rebase_merge: true
-          allow_squash_merge: true
-          allow_update_branch: false
-          delete_branch_on_merge: true
         ruleset:
           required_checks:
             - Ensure Go modules synchronicity
@@ -57,28 +20,7 @@ orgs:
             - Validate PR Title
             - integration-test (db2)
             - integration-test (pg)
-          rules:
-            deletion: {}
-            non_fast_forward: {}
-            pull_request:
-              allowed_merge_methods:
-                - merge
-                - squash
-                - rebase
-              dismiss_stale_reviews_on_push: false
-              require_code_owner_review: false
-              require_extra_approval_for_unattributed_changes: true
-              require_last_push_approval: false
-              required_approving_review_count: 0
-              required_review_thread_resolution: false
       - match: ghsettings
-        settings:
-          allow_auto_merge: true
-          allow_merge_commit: false
-          allow_rebase_merge: false
-          allow_squash_merge: true
-          allow_update_branch: true
-          delete_branch_on_merge: true
         ruleset:
           merge_queue:
             check_response_timeout_minutes: 60
@@ -91,26 +33,9 @@ orgs:
           required_checks:
             - CI result
             - Validate PR Title
-          rules:
-            deletion: {}
-            non_fast_forward: {}
-            pull_request:
-              allowed_merge_methods:
-                - squash
-              dismiss_stale_reviews_on_push: true
-              require_code_owner_review: true
-              require_extra_approval_for_unattributed_changes: true
-              require_last_push_approval: true
-              required_approving_review_count: 1
-              required_review_thread_resolution: true
-      - match: orion
         settings:
-          allow_auto_merge: true
-          allow_merge_commit: true
-          allow_rebase_merge: true
-          allow_squash_merge: true
-          allow_update_branch: false
-          delete_branch_on_merge: false
+          allow_update_branch: true
+      - match: orion
         ruleset:
           merge_queue:
             check_response_timeout_minutes: 60
@@ -126,28 +51,7 @@ orgs:
             - Run unit tests
             - Shellcheck
             - check-e2e-status
-          rules:
-            deletion: {}
-            non_fast_forward: {}
-            pull_request:
-              allowed_merge_methods:
-                - merge
-                - squash
-                - rebase
-              dismiss_stale_reviews_on_push: false
-              require_code_owner_review: true
-              require_extra_approval_for_unattributed_changes: true
-              require_last_push_approval: true
-              required_approving_review_count: 1
-              required_review_thread_resolution: true
       - match: pg_tps_optimizer
-        settings:
-          allow_auto_merge: true
-          allow_merge_commit: true
-          allow_rebase_merge: true
-          allow_squash_merge: true
-          allow_update_branch: false
-          delete_branch_on_merge: true
         ruleset:
           required_checks:
             - Build docker image (linux/amd64)
@@ -158,34 +62,10 @@ orgs:
             - Rustfmt and Clippy
             - Security audit (cargo audit)
             - Validate PR Title
-          rules:
-            deletion: {}
-            non_fast_forward: {}
-            pull_request:
-              allowed_merge_methods:
-                - merge
-                - squash
-                - rebase
-              dismiss_stale_reviews_on_push: true
-              require_code_owner_review: false
-              require_extra_approval_for_unattributed_changes: true
-              require_last_push_approval: true
-              required_approving_review_count: 1
-              required_review_thread_resolution: false
       - match: pgarrow
-        profile: no-ruleset
       - match: pgav
-        profile: no-ruleset
       - match: pgcustodian
-        profile: no-ruleset
       - match: pgfga
-        settings:
-          allow_auto_merge: true
-          allow_merge_commit: true
-          allow_rebase_merge: true
-          allow_squash_merge: true
-          allow_update_branch: false
-          delete_branch_on_merge: true
         ruleset:
           required_checks:
             - Ensure Go modules synchronicity
@@ -193,38 +73,9 @@ orgs:
             - Run integration tests
             - Run unittests
             - Validate PR Title
-          rules:
-            deletion: {}
-            non_fast_forward: {}
-            pull_request:
-              allowed_merge_methods:
-                - merge
-                - squash
-                - rebase
-              dismiss_stale_reviews_on_push: false
-              require_code_owner_review: false
-              require_extra_approval_for_unattributed_changes: true
-              require_last_push_approval: false
-              required_approving_review_count: 1
-              required_review_thread_resolution: false
       - match: pghba
-        profile: no-ruleset
       - match: pgquartz
-        settings:
-          allow_auto_merge: true
-          allow_merge_commit: true
-          allow_rebase_merge: true
-          allow_squash_merge: true
-          allow_update_branch: false
-          delete_branch_on_merge: true
       - match: pgroute66
-        settings:
-          allow_auto_merge: true
-          allow_merge_commit: true
-          allow_rebase_merge: true
-          allow_squash_merge: true
-          allow_update_branch: false
-          delete_branch_on_merge: true
         ruleset:
           required_checks:
             - Ensure Go modules synchronicity
@@ -232,19 +83,8 @@ orgs:
             - Run unit tests
             - Shellcheck
             - integration-test
-          rules:
-            deletion: {}
-            non_fast_forward: {}
       - match: pgsectest
-        profile: no-ruleset
       - match: pgtester
-        settings:
-          allow_auto_merge: true
-          allow_merge_commit: true
-          allow_rebase_merge: true
-          allow_squash_merge: true
-          allow_update_branch: false
-          delete_branch_on_merge: true
         ruleset:
           required_checks:
             - Ensure Go modules synchronicity
@@ -256,28 +96,7 @@ orgs:
             - Run integration tests (17)
             - Run unittests
             - Validate PR Title
-          rules:
-            deletion: {}
-            non_fast_forward: {}
-            pull_request:
-              allowed_merge_methods:
-                - merge
-                - squash
-                - rebase
-              dismiss_stale_reviews_on_push: false
-              require_code_owner_review: false
-              require_extra_approval_for_unattributed_changes: true
-              require_last_push_approval: false
-              required_approving_review_count: 0
-              required_review_thread_resolution: false
       - match: specbuilder
-        settings:
-          allow_auto_merge: true
-          allow_merge_commit: true
-          allow_rebase_merge: true
-          allow_squash_merge: true
-          allow_update_branch: false
-          delete_branch_on_merge: true
         ruleset:
           required_checks:
             - Ensure Go modules synchronicity
@@ -286,28 +105,7 @@ orgs:
             - Shellcheck
             - Validate PR Title
             - check-e2e-status
-          rules:
-            deletion: {}
-            non_fast_forward: {}
-            pull_request:
-              allowed_merge_methods:
-                - merge
-                - squash
-                - rebase
-              dismiss_stale_reviews_on_push: true
-              require_code_owner_review: true
-              require_extra_approval_for_unattributed_changes: false
-              require_last_push_approval: false
-              required_approving_review_count: 1
-              required_review_thread_resolution: true
       - match: stolon
-        settings:
-          allow_auto_merge: true
-          allow_merge_commit: true
-          allow_rebase_merge: true
-          allow_squash_merge: true
-          allow_update_branch: false
-          delete_branch_on_merge: true
         ruleset:
           required_checks:
             - Ensure Go modules synchronicity
@@ -319,19 +117,4 @@ orgs:
             - Run e2e tests (18)
             - Run unit tests
             - Shellcheck
-          rules:
-            deletion: {}
-            non_fast_forward: {}
-            pull_request:
-              allowed_merge_methods:
-                - merge
-                - squash
-                - rebase
-              dismiss_stale_reviews_on_push: false
-              require_code_owner_review: false
-              require_extra_approval_for_unattributed_changes: true
-              require_last_push_approval: true
-              required_approving_review_count: 0
-              required_review_thread_resolution: false
       - match: wal-g
-        profile: no-ruleset
