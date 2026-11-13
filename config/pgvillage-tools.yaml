@@ -77,12 +77,19 @@ orgs:
       - match: pgquartz
       - match: pgroute66
         ruleset:
+          merge_queue:
+            check_response_timeout_minutes: 60
+            grouping_strategy: ALLGREEN
+            max_entries_to_build: 5
+            max_entries_to_merge: 5
+            merge_method: SQUASH
+            min_entries_to_merge: 1
+            min_entries_to_merge_wait_minutes: 5
           required_checks:
-            - Ensure Go modules synchronicity
-            - Lint Go code
-            - Run unit tests
-            - Shellcheck
-            - integration-test
+            - CI result
+            - Validate PR Title
+        settings:
+          allow_update_branch: true
       - match: pgsectest
       - match: pgtester
         ruleset:
