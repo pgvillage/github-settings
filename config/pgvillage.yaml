@@ -3,9 +3,19 @@
 profiles:
   ansible-role:
     ruleset:
+      merge_queue:
+        check_response_timeout_minutes: 60
+        grouping_strategy: ALLGREEN
+        max_entries_to_build: 5
+        max_entries_to_merge: 5
+        merge_method: SQUASH
+        min_entries_to_merge: 1
+        min_entries_to_merge_wait_minutes: 5
       required_checks:
-        - Ansible Lint
-        - Molecule
+        - CI result
+        - Validate PR Title
+    settings:
+      allow_update_branch: true
   ansible-lint-only:
     ruleset:
       required_checks:
@@ -13,30 +23,8 @@ profiles:
 orgs:
   pgvillage:
     repos:
-      - match: ansible-role-etcd
-        ruleset:
-          merge_queue:
-            check_response_timeout_minutes: 60
-            grouping_strategy: ALLGREEN
-            max_entries_to_build: 5
-            max_entries_to_merge: 5
-            merge_method: SQUASH
-            min_entries_to_merge: 1
-            min_entries_to_merge_wait_minutes: 5
-          required_checks:
-            - CI result
-            - Validate PR Title
-        settings:
-          allow_update_branch: true
-      - match: ansible-role-linux
-        ruleset:
-          required_checks:
-            - Ansible Lint
-            - Molecule (apt)
-            - Molecule (default)
-            - Molecule (zypper)
-      - match: ansible-role-nagios
-        profile: ansible-lint-only
+      # New, still being set up: review rules only until it has CI (Ansible Lint + Molecule + CI result)
+      - match: ansible-role-pgadmin
       - match: github-settings
         ruleset:
           merge_queue:
