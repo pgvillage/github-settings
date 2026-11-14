@@ -74,9 +74,38 @@ orgs:
             - Rustfmt and Clippy
             - Security audit (cargo audit)
             - Validate PR Title
+      # Review rules only for now; CI and required checks to be revisited: pgvillage/pgvillage#149
       - match: pgarrow
       - match: pgav
+        ruleset:
+          merge_queue:
+            check_response_timeout_minutes: 60
+            grouping_strategy: ALLGREEN
+            max_entries_to_build: 5
+            max_entries_to_merge: 5
+            merge_method: SQUASH
+            min_entries_to_merge: 1
+            min_entries_to_merge_wait_minutes: 5
+          required_checks:
+            - CI result
+            - Validate PR Title
+        settings:
+          allow_update_branch: true
       - match: pgcustodian
+        ruleset:
+          merge_queue:
+            check_response_timeout_minutes: 60
+            grouping_strategy: ALLGREEN
+            max_entries_to_build: 5
+            max_entries_to_merge: 5
+            merge_method: SQUASH
+            min_entries_to_merge: 1
+            min_entries_to_merge_wait_minutes: 5
+          required_checks:
+            - CI result
+            - Validate PR Title
+        settings:
+          allow_update_branch: true
       - match: pgfga
         ruleset:
           merge_queue:
@@ -92,8 +121,23 @@ orgs:
             - Validate PR Title
         settings:
           allow_update_branch: true
+      # Review rules only for now; CI and required checks to be revisited: pgvillage/pgvillage#149
       - match: pghba
       - match: pgquartz
+        ruleset:
+          merge_queue:
+            check_response_timeout_minutes: 60
+            grouping_strategy: ALLGREEN
+            max_entries_to_build: 5
+            max_entries_to_merge: 5
+            merge_method: SQUASH
+            min_entries_to_merge: 1
+            min_entries_to_merge_wait_minutes: 5
+          required_checks:
+            - CI result
+            - Validate PR Title
+        settings:
+          allow_update_branch: true
       - match: pgroute66
         ruleset:
           merge_queue:
@@ -109,6 +153,7 @@ orgs:
             - Validate PR Title
         settings:
           allow_update_branch: true
+      # Review rules only for now; CI and required checks to be revisited: pgvillage/pgvillage#149
       - match: pgsectest
       - match: pgtester
         ruleset:
@@ -155,4 +200,6 @@ orgs:
             - Validate PR Title
         settings:
           allow_update_branch: true
+      # Exception: wal-g is a copy of upstream wal-g that merges upstream commits, so it keeps upstream's CI and
+      # CODEOWNERS (no required checks, no merge queue). To be phased out once our changes are upstream (#1).
       - match: wal-g
