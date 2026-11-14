@@ -1,13 +1,24 @@
 # The repositories of pgvillage-build: profiles and exceptions to the standard (standard.yaml).
 # Started as the exported current state (2026-11-09); moves to the standard in small PRs (#1).
+profiles:
+  build:
+    ruleset:
+      merge_queue:
+        check_response_timeout_minutes: 60
+        grouping_strategy: ALLGREEN
+        max_entries_to_build: 5
+        max_entries_to_merge: 5
+        merge_method: SQUASH
+        min_entries_to_merge: 1
+        min_entries_to_merge_wait_minutes: 5
+      required_checks:
+        - CI result
+        - Validate PR Title
+    settings:
+      allow_update_branch: true
 orgs:
   pgvillage-build:
     repos:
-      - match: aptbuilder
-      - match: db2_fdw
-      - match: imgbuilder
-      - match: rpmbuilder
-        ruleset:
-          required_checks:
-            - Validate PR Title
-            - check-build-rpms-status
+      # db2_fdw is dormant; whether it stays is tracked in pgvillage/pgvillage#149
+      - match: "*"
+        profile: build
