@@ -15,9 +15,10 @@ standard:
       pull_request:
         allowed_merge_methods:
           - squash
+        # require_extra_approval_for_unattributed_changes is left to GitHub's default: it only applies to pull requests
+        # that Copilot opens under its own identity, and we don't use Copilot.
         dismiss_stale_reviews_on_push: true
         require_code_owner_review: true
-        require_extra_approval_for_unattributed_changes: true
         require_last_push_approval: true
         required_approving_review_count: 1
         required_review_thread_resolution: true
