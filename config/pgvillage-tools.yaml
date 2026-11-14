@@ -74,6 +74,7 @@ orgs:
             - Rustfmt and Clippy
             - Security audit (cargo audit)
             - Validate PR Title
+      # Review rules only for now; CI and required checks to be revisited: pgvillage/pgvillage#149
       - match: pgarrow
       - match: pgav
         ruleset:
@@ -120,6 +121,7 @@ orgs:
             - Validate PR Title
         settings:
           allow_update_branch: true
+      # Review rules only for now; CI and required checks to be revisited: pgvillage/pgvillage#149
       - match: pghba
       - match: pgquartz
         ruleset:
@@ -151,6 +153,7 @@ orgs:
             - Validate PR Title
         settings:
           allow_update_branch: true
+      # Review rules only for now; CI and required checks to be revisited: pgvillage/pgvillage#149
       - match: pgsectest
       - match: pgtester
         ruleset:
