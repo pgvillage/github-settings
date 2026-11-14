@@ -43,7 +43,7 @@ jobs:
         id: token-pgvillage
         uses: actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510 # v3.3.0
         with:
-          app-id: ${{ vars.ADMIN_APP_ID }}
+          client-id: ${{ vars.ADMIN_APP_CLIENT_ID }}
           private-key: ${{ secrets.ADMIN_APP_PRIVATE_KEY }}
           owner: pgvillage
           permission-administration: write
@@ -52,7 +52,7 @@ jobs:
         id: token-pgvillage-tools
         uses: actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510 # v3.3.0
         with:
-          app-id: ${{ vars.ADMIN_APP_ID }}
+          client-id: ${{ vars.ADMIN_APP_CLIENT_ID }}
           private-key: ${{ secrets.ADMIN_APP_PRIVATE_KEY }}
           owner: pgvillage-tools
           permission-administration: write
@@ -61,7 +61,7 @@ jobs:
         id: token-pgvillage-build
         uses: actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510 # v3.3.0
         with:
-          app-id: ${{ vars.ADMIN_APP_ID }}
+          client-id: ${{ vars.ADMIN_APP_CLIENT_ID }}
           private-key: ${{ secrets.ADMIN_APP_PRIVATE_KEY }}
           owner: pgvillage-build
           permission-administration: write
