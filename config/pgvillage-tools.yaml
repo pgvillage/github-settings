@@ -65,15 +65,19 @@ orgs:
           allow_update_branch: true
       - match: pg_tps_optimizer
         ruleset:
+          merge_queue:
+            check_response_timeout_minutes: 60
+            grouping_strategy: ALLGREEN
+            max_entries_to_build: 5
+            max_entries_to_merge: 5
+            merge_method: SQUASH
+            min_entries_to_merge: 1
+            min_entries_to_merge_wait_minutes: 5
           required_checks:
-            - Build docker image (linux/amd64)
-            - Build docker image (linux/arm64)
-            - Build documentation
-            - Run e2e tests (testcontainers)
-            - Run unit tests
-            - Rustfmt and Clippy
-            - Security audit (cargo audit)
+            - CI result
             - Validate PR Title
+        settings:
+          allow_update_branch: true
       # Review rules only for now; CI and required checks to be revisited: pgvillage/pgvillage#149
       - match: pgarrow
       - match: pgav
