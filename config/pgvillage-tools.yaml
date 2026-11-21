@@ -13,9 +13,9 @@ orgs:
       # CODEOWNERS (no required checks, no merge queue). To be phased out once our changes are upstream (#1).
       - match: wal-g
         profile: review-only
-      # Not in the config yet: left alone until they are brought on the standard.
+      # No CI yet: review rules only until they are on the standard (pgdemo#1, pgtestbuilder#1)
       - match: pgdemo
-        ignore: true
+        profile: review-only
       - match: pgtestbuilder
-        ignore: true
+        profile: review-only
       - match: "*"
