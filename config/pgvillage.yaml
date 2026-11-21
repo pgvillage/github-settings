@@ -1,19 +1,10 @@
-# The repositories of pgvillage: profiles and exceptions to the standard (standard.yaml). The first matching rule
-# applies.
-profiles:
-  ansible-lint-only:
-    ruleset:
-      merge_queue: null
-      required_checks:
-        - Ansible Lint
+# The repositories of pgvillage: exceptions to the standard (standard.yaml). The first matching rule applies.
 orgs:
   pgvillage:
     repos:
       # New, still being set up: review rules only until it has CI (Ansible Lint + Molecule + CI result)
       - match: ansible-role-pgadmin
         profile: review-only
-      - match: pgvillage
-        profile: ansible-lint-only
       - match: pgv_*
         profile: review-only
       - match: "*"
