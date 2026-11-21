@@ -5,7 +5,9 @@ standard:
     allow_merge_commit: false
     allow_rebase_merge: false
     allow_squash_merge: true
-    allow_update_branch: true
+    # No "Update branch" button: the merge queue tests every pull request on top of the latest default branch anyway,
+    # and an update by a reviewer makes them the last pusher, so the pull request needs another approval.
+    allow_update_branch: false
     delete_branch_on_merge: true
   ruleset:
     rules:
@@ -39,5 +41,3 @@ profiles:
     ruleset:
       merge_queue: null
       required_checks: null
-    settings:
-      allow_update_branch: false

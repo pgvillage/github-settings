@@ -6,8 +6,6 @@ profiles:
       merge_queue: null
       required_checks:
         - Ansible Lint
-    settings:
-      allow_update_branch: false
 orgs:
   pgvillage:
     repos:
