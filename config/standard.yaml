@@ -1,11 +1,12 @@
-# The standard for every repository (#1). Org files and profiles override parts of it; repositories move to the
-# standard in small steps (see the README).
+# The standard for every repository (#1). Org files and profiles override parts of it.
 standard:
   settings:
     allow_auto_merge: true
     allow_merge_commit: false
     allow_rebase_merge: false
     allow_squash_merge: true
+    # No "Update branch" button: the merge queue tests every pull request on top of the latest default branch anyway,
+    # and an update by a reviewer makes them the last pusher, so the pull request needs another approval.
     allow_update_branch: false
     delete_branch_on_merge: true
   ruleset:
@@ -22,3 +23,21 @@ standard:
         require_last_push_approval: true
         required_approving_review_count: 1
         required_review_thread_resolution: true
+    merge_queue:
+      check_response_timeout_minutes: 60
+      grouping_strategy: ALLGREEN
+      max_entries_to_build: 5
+      max_entries_to_merge: 5
+      merge_method: SQUASH
+      min_entries_to_merge: 1
+      min_entries_to_merge_wait_minutes: 5
+    required_checks:
+      - CI result
+      - Validate PR Title
+profiles:
+  # For the repositories that are not (yet) on the standard: the review rules only, no required checks and no merge
+  # queue.
+  review-only:
+    ruleset:
+      merge_queue: null
+      required_checks: null

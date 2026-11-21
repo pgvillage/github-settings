@@ -19,8 +19,9 @@ repository holds the desired state; a pipeline applies it and corrects drift.
   - required status checks: one aggregate CI check (`CI result`) and `Validate PR Title`;
   - a merge queue (squash) wherever it works.
 
-The standard is the same for every repository. Groups of repositories have a *profile* that mainly differs in the
-required checks.
+The standard is the same for every repository, and new repositories get it by default. The few repositories that
+are not on it yet get a *profile* (e.g. `review-only`: the review rules, without required checks or merge queue), or
+are ignored.
 
 Files inside the repositories (`CODEOWNERS`, `pr-title-check.yml`, the `CI result` job, `merge_group` triggers in
 workflows) are **not** managed here: they are added through pull requests, so they get reviewed like any other
@@ -30,8 +31,8 @@ change.
 
 ```text
 config/
-  standard.yaml          # the standard for every repository
-  <org>.yaml             # per org: which repositories get which profile
+  standard.yaml          # the standard for every repository, and the shared profiles
+  <org>.yaml             # per org: the exceptions to the standard
 ```
 
 See the [ghsettings README](https://github.com/pgvillage-tools/ghsettings#config) for the config format.
